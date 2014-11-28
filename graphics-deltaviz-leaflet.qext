@@ -1,0 +1,9 @@
+{
+	"name": "leaflet",
+	"description": "leaflet hello world",
+	"icon": "map",
+	"type": "visualization",
+	"version": 1,
+	"preview": "map",
+	"author": "(c) Yves Blake 2014"
+}
