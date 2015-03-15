@@ -25,7 +25,7 @@
  *
  * @license    deltaViz : Copyright (c) 2014-2015, Yves Blake All rights reserved.
  * @library    leaflet : © 2010–2014 Vladimir Agafonkin, 2010–2011 CloudMade. Maps © OpenStreetMap contributors. All rights reserved.
- * @release    1.2
+ * @release    1.01
  * @details    https://github.com/yblake/leaflet
  */
  
