@@ -1,4 +1,35 @@
-define(["jquery" , "text!./graphics-deltaviz-leaflet.css", "text!./leaflet.css", "./leaflet"], function ( $, cssContent, cssLeaflet ) {
+/**
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ *
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * The name Yves Blake may not be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL MICHAEL BOSTOCK BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @license    deltaViz : Copyright (c) 2014-2015, Yves Blake All rights reserved.
+ * @library    leaflet : © 2010–2014 Vladimir Agafonkin, 2010–2011 CloudMade. Maps © OpenStreetMap contributors. All rights reserved.
+ * @release    1.2
+ * @details    https://github.com/yblake/leaflet
+ */
+ 
+ define(["jquery" , "text!./graphics-deltaviz-leaflet.css", "text!./lib/leaflet.css", "./lib/leaflet"], function ( $, cssContent, cssLeaflet ) {
 
 	'use strict';
 
@@ -7,14 +38,14 @@ define(["jquery" , "text!./graphics-deltaviz-leaflet.css", "text!./leaflet.css",
 
 	// Leaflet style sheet (fix Leaflet background images URL)
 	var re = /url\(images/gi; 
-	cssLeaflet = cssLeaflet.replace(re, "url(/extensions/graphics-deltaviz-leaflet/images");
+	cssLeaflet = cssLeaflet.replace(re, "url(/extensions/graphics-deltaviz-leaflet/lib/images");
 	$("<style>").html(cssLeaflet).appendTo("head");
 
 	return {
 
 		// New object properties
 		initialProperties: {
-			version: 1.0,
+			version: 1.01,
 			qHyperCubeDef: {
 				qDimensions: [],
 				qMeasures: [],
@@ -79,7 +110,7 @@ define(["jquery" , "text!./graphics-deltaviz-leaflet.css", "text!./leaflet.css",
 			var dataL = layout.qHyperCube.qDataPages[0].qMatrix.map( function(d) {
 				// for each element in the matrix, create a new object that has a property for dimensions and measures
 				return {
-					"item" : d[qmDimension].qIsOtherCell ? this.backendApi.getDimensionInfos()[qmDimension].othersLabel : d[qmDimension].qText,
+					"item": d[qmDimension].qIsOtherCell ? layout.qHyperCube.qDimensionInfo[qmDimension].othersLabel : d[qmDimension].qText,
 					"poi" : L.latLng(d[qmLatitude].qNum, d[qmLongitude].qNum),
 					"size" : measures.length > 2 ? Math.max(50,Math.ceil(100 * d[qmValue].qNum/measures[2].max)) : 50,
 					"fillcolor" : measures.length > 3 ? d[qmColor].qText : "green",
@@ -157,7 +188,17 @@ var leafletViz = function ( self, dataL, dimensions, measures, width, height, id
 		map.fitWorld();
 	}
 	var minZoom = map.getBoundsZoom(map.getBounds());
-	
+
+	// Adjust zoom
+	if (maxZoom - minZoom >= 5) {
+		// Large map : get a little bit closer at first glance
+		map.zoomIn(1,{"animate":false});
+	} else if (minZoom >= maxZoom) {
+		// Narrow map : get some altitude... 
+		minZoom--;
+		map.zoomOut(1,{"animate":false});
+	};
+
 	// Show metric scale
 	L.control.scale({imperial:false}).addTo(map);
 
@@ -192,7 +233,7 @@ var leafletViz = function ( self, dataL, dimensions, measures, width, height, id
 	}
 
 	// Set default layers
-	map.addLayer(OpenStreetMap_BlackAndWhite);
+	map.addLayer(Esri_WorldStreetMap);
 	map.addLayer(overlayLayer);
 	map.attributionControl.setPrefix('&copy;&nbsp;<a href="http://deltaviz.graphics/">deltaViz</a>&nbsp;<a href="http://leafletjs.com/">Leaflet</a>');
 

@@ -1,9 +1,9 @@
 {
 	"name": "leaflet",
-	"description": "leaflet hello world",
+	"description": "leaflet sample extension",
 	"icon": "map",
 	"type": "visualization",
-	"version": 1,
+	"version": 1.01,
 	"preview": "map",
-	"author": "(c) Yves Blake 2014"
+	"author": "(c) Yves Blake 2014-2015"
 }
